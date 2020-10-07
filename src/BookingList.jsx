@@ -1,47 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import API from '@aws-amplify/api';
+import moment from 'moment';
+// import Auth from '@aws-amplify/auth';
 import { Analytics } from 'aws-amplify';
+import { BookingListRenderer} from './BookingListRenderer.jsx';
+
+function recordEventWithoutPayload(eventName, userId = "123") {
+    Analytics.record({
+        data: {
+            "event": eventName,
+            "timestamp": moment().format('YYYY-MM-DD HH:mm:ss'),
+            "userId": userId,
+        },
+        streamName: 'octankairlinestream-devx'
+    }, 'AWSKinesis');
+}
 
 export function BookingList() {
     const [bookings, setBookings] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        Analytics.record({
-            data: {
-                "event": "Loading bookings",
-            },
-            streamName: 'octankairlinestream-devx'
-        }, 'AWSKinesis');
+        // Auth.currentUserInfo
+        recordEventWithoutPayload("Loading bookings");
         API.endpoint('octankapi').then((endpoint) => console.log(endpoint))
         API.get('octankapi', '/bookings')
             .then((bookingsResponse) => {
                 setBookings(bookingsResponse);
                 setIsLoading(false);
-                Analytics.record({
-                    data: {
-                        "event": "Successfully loaded bookings",
-                    },
-                    streamName: 'octankairlinestream-devx'
-                }, 'AWSKinesis');
+                recordEventWithoutPayload("Successfully loaded bookings");
             })
             .catch((error) => {
                 console.log('Error fetching bookings', error);
                 setBookings(null);
                 setIsLoading(false);
-                Analytics.record({
-                    data: {
-                        "event": "Failed to load bookings",
-                    },
-                    streamName: 'octankairlinestream-devx'
-                }, 'AWSKinesis');
+                recordEventWithoutPayload("Failed to load bookings");
             })
     }, [])
 
     return (
-        <div>
+        <div className="mt-2">
             { isLoading && <p>Loading bookings ...</p> }
-            { !isLoading && <div>{JSON.stringify(bookings)}</div>}
+            { !isLoading && <BookingListRenderer items={["Blubb", "Bla", "Foo"]}/>}
         </div>
     );
 }
