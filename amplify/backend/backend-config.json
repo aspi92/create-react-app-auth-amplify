@@ -28,5 +28,11 @@
         }
       ]
     }
+  },
+  "analytics": {
+    "octankairlinestream": {
+      "service": "Kinesis",
+      "providerPlugin": "awscloudformation"
+    }
   }
 }

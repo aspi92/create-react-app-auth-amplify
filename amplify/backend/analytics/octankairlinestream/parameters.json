@@ -1,0 +1,12 @@
+{
+  "kinesisStreamName": "octankairlinestream",
+  "kinesisStreamShardCount": 1,
+  "authRoleName": {
+    "Ref": "AuthRoleName"
+  },
+  "unauthRoleName": {
+    "Ref": "UnauthRoleName"
+  },
+  "authPolicyName": "kinesis_amplify_9b090b60",
+  "unauthPolicyName": "kinesis_amplify_9b090b60"
+}
