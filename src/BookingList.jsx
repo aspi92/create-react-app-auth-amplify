@@ -23,7 +23,6 @@ export function BookingList() {
     useEffect(() => {
         // Auth.currentUserInfo
         recordEventWithoutPayload("Loading bookings");
-        API.endpoint('octankapi').then((endpoint) => console.log(endpoint))
         API.get('octankapi', '/bookings')
             .then((bookingsResponse) => {
                 setBookings(bookingsResponse);
@@ -42,6 +41,7 @@ export function BookingList() {
         <div className="mt-2">
             { isLoading && <p>Loading bookings ...</p> }
             { !isLoading && <BookingListRenderer items={["Blubb", "Bla", "Foo"]}/>}
+            { bookings}
         </div>
     );
 }

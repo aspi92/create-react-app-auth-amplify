@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import API from '@aws-amplify/api';
+import React from 'react';
 
 export function BookingListRenderer({ items }) {
     return (
