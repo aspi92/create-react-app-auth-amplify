@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { withAuthenticator } from 'aws-amplify-react'
-import Amplify, {Analytics, AWSKinesisProvider} from 'aws-amplify';
+import Amplify, {Analytics, AWSKinesisProvider, Auth} from 'aws-amplify';
 import aws_exports from './aws-exports';
 import { BookingForm } from './BookingForm.jsx';
 
@@ -19,7 +19,7 @@ Analytics.configure({
         flushSize: 100,
 
         // OPTIONAL - The interval in milliseconds to perform a buffer check and flush if necessary.
-        flushInterval: 5000, // 5s
+        flushInterval: 1000, // 5s
 
         // OPTIONAL - The limit for failed recording retries.
         resendLimit: 5
@@ -27,16 +27,23 @@ Analytics.configure({
 });
 Analytics.addPluggable(new AWSKinesisProvider());
 
-class App extends Component {
-  render() {
+function App() {
+  const [currentUser, setCurrentUser] = useState(null);
+  
+  useEffect(() => {
+    Auth.currentUserInfo().then((currentUserInfo) => {
+      setCurrentUser(currentUserInfo);
+      console.log(currentUserInfo);
+    })
+  }, []);
+  
     return (
       <div className="App">
         <div className="container mt-2">
-          <BookingForm />
+          {currentUser && <BookingForm userName={currentUser.username}/>}
         </div>
       </div>
     );
-  }
 }
 
 export default withAuthenticator(App, true);

@@ -2,9 +2,13 @@ import React, {useState} from 'react';
 
 import { BookingList } from './BookingList.jsx';
 
-export function BookingForm() {
+export function BookingForm({ userName }) {
     const [searchInput, setSearchInput] = useState("");
     const [currentSearchCriteria, setCurrentSearchCriteria] = useState("");
+    
+    if (!userName) {
+      return null;
+    }
     
     return (
         <div className="card">
@@ -26,7 +30,7 @@ export function BookingForm() {
                   }>Search</button>
                 </form>
             
-                <BookingList currentSearchCriteria={currentSearchCriteria}/>
+                <BookingList userName={userName} currentSearchCriteria={currentSearchCriteria}/>
             </div>
         </div>
     );

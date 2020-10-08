@@ -1,46 +1,56 @@
 import React, { useState, useEffect } from 'react';
 import API from '@aws-amplify/api';
 import moment from 'moment';
-// import Auth from '@aws-amplify/auth';
 import { Analytics } from 'aws-amplify';
 import { BookingListRenderer} from './BookingListRenderer.jsx';
 
-function recordEventWithoutPayload(eventName, userId = "123") {
+function recordEventWithPayload(eventName, payload, userId) {
     Analytics.record({
         data: {
-            "event": eventName,
-            "timestamp": moment().format('YYYY-MM-DD HH:mm:ss'),
-            "userId": userId,
+            event: eventName,
+            payload,
+            timestamp: moment().format('YYYY-MM-DD HH:mm:ss'),
+            userId: userId,
         },
         streamName: 'octankairlinestream-devx'
     }, 'AWSKinesis');
 }
 
-export function BookingList({ currentSearchCriteria }) {
+function recordEventWithoutPayload(eventName, userId) {
+    Analytics.record({
+        data: {
+            event: eventName,
+            timestamp: moment().format('YYYY-MM-DD HH:mm:ss'),
+            userId: userId,
+        },
+        streamName: 'octankairlinestream-devx'
+    }, 'AWSKinesis');
+}
+
+export function BookingList({userName, currentSearchCriteria }) {
     const [bookings, setBookings] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Auth.currentUserInfo
-        recordEventWithoutPayload("Loading bookings");
+        recordEventWithPayload("search", currentSearchCriteria, userName);
         API.get('octankapi', `/bookings?filter=${currentSearchCriteria}`)
             .then((bookingsResponse) => {
                 setBookings(bookingsResponse);
                 setIsLoading(false);
-                recordEventWithoutPayload("Successfully loaded bookings");
+                recordEventWithoutPayload("list bookings", userName);
             })
             .catch((error) => {
                 console.log('Error fetching bookings', error);
                 setBookings([]);
                 setIsLoading(false);
-                recordEventWithoutPayload("Failed to load bookings");
-            })
+                recordEventWithoutPayload("failed listing bookings", userName);
+            });
     }, [currentSearchCriteria])
 
     return (
         <div className="mt-2">
             { isLoading && <p>Loading bookings for {currentSearchCriteria} ...</p> }
-            { !isLoading && <BookingListRenderer items={bookings}/>}
+            { !isLoading && <BookingListRenderer items={bookings}/> }
         </div>
     );
 }
