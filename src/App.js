@@ -31,7 +31,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <div class="container mt-2">
+        <div className="container mt-2">
           <BookingForm />
         </div>
       </div>

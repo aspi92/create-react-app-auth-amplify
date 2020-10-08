@@ -16,14 +16,14 @@ function recordEventWithoutPayload(eventName, userId = "123") {
     }, 'AWSKinesis');
 }
 
-export function BookingList() {
-    const [bookings, setBookings] = useState(null);
+export function BookingList({ currentSearchCriteria }) {
+    const [bookings, setBookings] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         // Auth.currentUserInfo
         recordEventWithoutPayload("Loading bookings");
-        API.get('octankapi', '/bookings')
+        API.get('octankapi', `/bookings?filter=${currentSearchCriteria}`)
             .then((bookingsResponse) => {
                 setBookings(bookingsResponse);
                 setIsLoading(false);
@@ -31,17 +31,16 @@ export function BookingList() {
             })
             .catch((error) => {
                 console.log('Error fetching bookings', error);
-                setBookings(null);
+                setBookings([]);
                 setIsLoading(false);
                 recordEventWithoutPayload("Failed to load bookings");
             })
-    }, [])
+    }, [currentSearchCriteria])
 
     return (
         <div className="mt-2">
-            { isLoading && <p>Loading bookings ...</p> }
-            { !isLoading && <BookingListRenderer items={["Blubb", "Bla", "Foo"]}/>}
-            { bookings}
+            { isLoading && <p>Loading bookings for {currentSearchCriteria} ...</p> }
+            { !isLoading && <BookingListRenderer items={bookings}/>}
         </div>
     );
 }

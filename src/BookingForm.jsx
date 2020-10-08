@@ -1,21 +1,32 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 import { BookingList } from './BookingList.jsx';
 
 export function BookingForm() {
+    const [searchInput, setSearchInput] = useState("");
+    const [currentSearchCriteria, setCurrentSearchCriteria] = useState("");
+    
     return (
-        <div class="card">
-            <div div class="card-body">
+        <div className="card">
+            <div className="card-body">
                 <form>
-                  <div class="form-group">
-                    <label for="searchInput">Search for a booking:</label>
-                    <input type="text" class="form-control" id="searchInput" placeholder="Enter a city" />
-                    <small id="searchHelp" class="form-text text-muted">Please choose either: Rome, London, Birmingham, Berlin, Tel Aviv, or, Amsterdam </small>
+                  <div className="form-group">
+                    <label htmlFor="searchInput">Search for a booking:</label>
+                    <input type="text"
+                    value={searchInput}
+                    onChange={event => setSearchInput(event.target.value)}
+                    className = "form-control"
+                    id = "searchInput"
+                    placeholder="Enter a city" />
+                    <small id="searchHelp" className="form-text text-muted">Please choose either: New York, Dallas, Chicago, San Franciso, or, Seattle</small>
                   </div>
-                  <button type="submit" class="btn btn-primary">Search</button>
+                  <button type="submit" className="btn btn-primary" onClick={(event) => {
+                    event.preventDefault();
+                    setCurrentSearchCriteria(searchInput)}
+                  }>Search</button>
                 </form>
             
-                <BookingList />
+                <BookingList currentSearchCriteria={currentSearchCriteria}/>
             </div>
         </div>
     );
